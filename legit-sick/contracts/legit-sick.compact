@@ -13,7 +13,6 @@ export ledger doctors: Map<ZswapCoinPublicKey, Boolean>;
 // client --> hash(sicky_record)
 export ledger client_records: Map<ZswapCoinPublicKey, Bytes<32>>;
 
-// a doctor can add or create a user record (all fields are private)
 struct Sicky_Record {
     id: Uint<64>,
     doctor: ZswapCoinPublicKey, // doctors[doctor] must be true
@@ -21,17 +20,12 @@ struct Sicky_Record {
     duration_of_certificate: Uint<64>, // probably days
 }
 
-witness sicky_record(
-    id: Uint<64>,
-    doctor: ZswapCoinPublicKey, // doctors[doctor] must be true
-    issued_at: Uint<64>,
-    duration_of_certificate: Uint<64>, // probably days
-): Sicky_Record;
+// client --> disclosed fields
+export ledger client_disclosed: Map<ZswapCoinPublicKey, Sicky_Record>;
 
 // ------------------------------------------------------
 // Constructor
 // ------------------------------------------------------
-
 constructor() {
   doctor_register = ownPublicKey();
 }
@@ -46,7 +40,6 @@ export circuit sicky_record_hash(sicky: Sicky_Record): Bytes<32> {
 // ------------------------------------------------------
 // DOCTOR REGISTER METHODS
 // ------------------------------------------------------
-
 export circuit add_doctor(doctor: ZswapCoinPublicKey): [] {
     assert(ownPublicKey() == doctor_register, "Only Register can call");
     doctors.insert(disclose(doctor), true);
@@ -66,11 +59,11 @@ export circuit create_client_record(
     duration_of_certificate: Uint<64>, // probably days
     client: ZswapCoinPublicKey,
 ): [] {
-    assert(doctors.lookup(ownPublicKey()), "only doctors can create records");
-
     const doctor = ownPublicKey();
+    assert(doctors.lookup(doctor), "only doctors can create records");
+
     const record = Sicky_Record {
-        id, // TODO make dynamic
+        id,
         doctor,
         issued_at,
         duration_of_certificate,
@@ -84,3 +77,25 @@ export circuit create_client_record(
 // ------------------------------------------------------
 // CLIENT METHODS
 // ------------------------------------------------------
+export circuit client_disclose(
+    id: Uint<64>,
+    issued_at: Uint<64>,
+    duration_of_certificate: Uint<64>, // probably days
+    doctor: ZswapCoinPublicKey,
+): [] {
+    const client = ownPublicKey();
+    const record = Sicky_Record {
+        id,
+        doctor,
+        issued_at,
+        duration_of_certificate,
+    };
+    const hash = sicky_record_hash(record);
+
+    const lookUpHash = client_records.lookup(client);
+
+    assert(hash == lookUpHash, "Hashes don't match");
+
+    // insert public record
+    client_disclosed.insert(disclose(client), disclose(record));
+}

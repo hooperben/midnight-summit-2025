@@ -121,6 +121,34 @@ class LegitSicky {
     return ledger(this.circuitContext.transactionContext.state);
   }
 
+  public client_disclose(
+    _client: Uint8Array,
+    _doctor: Uint8Array,
+    id: bigint,
+    issued_at: bigint,
+    duration_of_certificate: bigint,
+  ): Ledger {
+    this.circuitContext.currentZswapLocalState = {
+      ...this.circuitContext.currentZswapLocalState,
+      coinPublicKey: {
+        bytes: _client,
+      },
+    };
+
+    // Update the current context to be the result of executing the circuit.
+    this.circuitContext = this.contract.impureCircuits.client_disclose(
+      this.circuitContext,
+      id,
+      issued_at,
+      duration_of_certificate,
+      {
+        bytes: _doctor,
+      },
+    ).context;
+
+    return ledger(this.circuitContext.transactionContext.state);
+  }
+
   public get_hash(
     _doctor: Uint8Array,
     id: bigint,
@@ -150,7 +178,14 @@ describe("Testing legit sick circuits", () => {
     const hash = legit.get_hash(doctor, 1n, 100000n, 1000n);
 
     console.log(hash.result);
-
     console.log(legit.getLedger().client_records.lookup({ bytes: client1 }));
+
+    legit.client_disclose(client1, doctor, 1n, 100000n, 1000n);
+
+    const record = legit
+      .getLedger()
+      .client_disclosed.lookup({ bytes: client1 });
+
+    console.log(record);
   });
 });
