@@ -61,21 +61,28 @@ export circuit remove_doctor(doctor: ZswapCoinPublicKey): [] {
 // DOCTOR METHODS
 // ------------------------------------------------------
 
+
+
 export circuit create_client_record(
+    id: Uint<64>,
     issued_at: Uint<64>,
     duration_of_certificate: Uint<64>, // probably days
     client: ZswapCoinPublicKey,
 ): [] {
     assert(doctors.lookup(ownPublicKey()), "only doctors can create records");
 
-    const record = sicky_record(
-        1, // TODO make dynamic
-        ownPublicKey(),
+    const doctor = client;
+
+    const record = Sicky_Record {
+        id, // TODO make dynamic
+        doctor,
         issued_at,
         duration_of_certificate,
-    );
+    };
 
     const hash = disclose(sicky_record_hash(record));
+
+    // const hash = persistentHash<Uint<64>>(1);
 
     client_records.insert(disclose(client), hash);
 }
