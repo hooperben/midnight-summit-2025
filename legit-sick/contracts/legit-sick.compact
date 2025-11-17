@@ -69,7 +69,7 @@ export circuit create_client_record(
     assert(doctors.lookup(ownPublicKey()), "only doctors can create records");
 
     const record = sicky_record(
-        1,
+        1, // TODO make dynamic
         ownPublicKey(),
         issued_at,
         duration_of_certificate,

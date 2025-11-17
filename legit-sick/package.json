@@ -19,7 +19,7 @@
     "validate": "tsc --noEmit && npm run compile",
     "clean": "rm -rf dist contracts/managed deployment.json",
     "proof-server": "docker run -p 6300:6300 midnightnetwork/proof-server -- 'midnight-proof-server --network testnet'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "^0.8.1",
@@ -41,9 +41,10 @@
   "devDependencies": {
     "@types/node": "^24.4.0",
     "@types/ws": "^8.5.10",
-    "typescript": "^5.9.2",
+    "concurrently": "^8.2.0",
     "nodemon": "^3.0.1",
-    "concurrently": "^8.2.0"
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.10"
   },
   "engines": {
     "node": ">=22.0.0"
