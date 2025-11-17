@@ -167,17 +167,13 @@ export circuit register(
     year_of_birth
   );
 
-// Issuer must be trusted (public check) NOTE: for now we assume issuer is trusted
-// const issuerKey = disclose(cert.issuer);
-// assert(trusted_issuers.member(issuerKey), "Untrusted issuer");
-
-// ZK proof: signature, freshness, ownership
+  // ZK proof: signature, freshness, ownership
   const proofOk = disclose(prove_cert_signed_and_fresh(cert));
   assert(proofOk, "Invalid or expired certificate");
 
-    // One cert per owner :NOTE: for now we allow user to re-register
-    const caller = ownPublicKey();
-    // assert(!certificate_owners.member(caller), "Certificate already registered for owner");
+  // One cert per owner :NOTE: for now we allow user to re-register
+  const caller = ownPublicKey();
+  // assert(!certificate_owners.member(caller), "Certificate already registered for owner");
 
   // Commit only the hash on-chain
   const hash = disclose(cert_hash(cert));
@@ -294,16 +290,6 @@ export circuit access_private_feature(
         fid, 
         (feature_balances.lookup(fid) + paidCoin.value) as Uint<128>
     );
-
-    //    const coinToInsert = protocolTVL.member(paidCoin.color) ? 
-    // mergeCoinImmediate(protocolTVL.lookup(paidCoin.color), paidCoin) :
-    // paidCoin;
-
-    // protocolTVL.insertCoin(
-    //     paidCoin.color, 
-    //     coinToInsert, 
-    //     right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
-    // );
   }
 
   // Record anonymous access (nullifier)

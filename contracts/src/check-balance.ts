@@ -55,7 +55,6 @@ async function checkBalance() {
 
     console.log(chalk.cyan.bold("📍 Wallet Address:"));
     console.log(chalk.white(`   ${state.address}`));
-    console.log();
 
     const balance = state.balances[nativeToken()] || 0n;
 
