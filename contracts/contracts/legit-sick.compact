@@ -2,6 +2,19 @@ pragma language_version >= 0.18;
 
 import CompactStandardLibrary;
 
+// ------------------------------------------------------
+// Data Structures
+// ------------------------------------------------------
+struct Sicky_Record {
+    id: Uint<64>,
+    doctor: ZswapCoinPublicKey, // doctors[doctor] must be true
+    issued_at: Uint<64>,
+    duration_of_certificate: Uint<64>, // probably days
+    patient_name: Bytes<128>, // HIDEABLE
+    condition: Bytes<128>, // HIDEABLE
+    treatment: Bytes<128>, // HIDEABLE
+}
+
 // this is the admin account that can add doctors to the doctors mapping
 export ledger doctor_register: ZswapCoinPublicKey;
 
@@ -12,13 +25,6 @@ export ledger doctors: Map<ZswapCoinPublicKey, Boolean>;
 // TODO this is currently only 1 per client
 // client --> hash(sicky_record)
 export ledger client_records: Map<ZswapCoinPublicKey, Bytes<32>>;
-
-struct Sicky_Record {
-    id: Uint<64>,
-    doctor: ZswapCoinPublicKey, // doctors[doctor] must be true
-    issued_at: Uint<64>,
-    duration_of_certificate: Uint<64>, // probably days
-}
 
 // client --> disclosed fields
 export ledger client_disclosed: Map<ZswapCoinPublicKey, Sicky_Record>;
@@ -58,6 +64,9 @@ export circuit create_client_record(
     issued_at: Uint<64>,
     duration_of_certificate: Uint<64>, // probably days
     client: ZswapCoinPublicKey,
+    patient_name: Bytes<128>,
+    condition: Bytes<128>,
+    treatment: Bytes<128>,
 ): [] {
     const doctor = ownPublicKey();
     assert(doctors.lookup(doctor), "only doctors can create records");
@@ -67,6 +76,9 @@ export circuit create_client_record(
         doctor,
         issued_at,
         duration_of_certificate,
+        patient_name,
+        condition,
+        treatment,
     };
 
     const hash = disclose(sicky_record_hash(record));
@@ -82,20 +94,45 @@ export circuit client_disclose(
     issued_at: Uint<64>,
     duration_of_certificate: Uint<64>, // probably days
     doctor: ZswapCoinPublicKey,
+    patient_name: Bytes<128>, // HIDEABLE
+    condition: Bytes<128>, // HIDEABLE
+    treatment: Bytes<128>, // HIDEABLE
+    disclose_fields: [Boolean, Boolean, Boolean]
 ): [] {
     const client = ownPublicKey();
+
     const record = Sicky_Record {
         id,
         doctor,
         issued_at,
         duration_of_certificate,
+        patient_name,
+        condition,
+        treatment,
     };
-    const hash = sicky_record_hash(record);
+
+    const hash = disclose(sicky_record_hash(record));
 
     const lookUpHash = client_records.lookup(client);
 
     assert(hash == lookUpHash, "Hashes don't match");
 
-    // insert public record
-    client_disclosed.insert(disclose(client), disclose(record));
+    // const empty = convertFieldToBytes(32, 0, "");
+
+    // const pn = disclose_fields[0] ? some<Opaque<"string">>(patient_name) : empty;
+    // const c = disclose_fields[1] ? some<Opaque<"string">>(condition) : empty;
+    // const t = disclose_fields[2] ? some<Opaque<"string">>(treatment) : empty;
+
+    // const disclosed_record = Sicky_Record {
+    //     id,
+    //     doctor,
+    //     issued_at,
+    //     duration_of_certificate,
+    //     patient_name: pn,
+    //     condition: c,
+    //     treatment: t,
+    // };
+
+    // // insert public record
+    // client_disclosed.insert(disclose(client), disclose(disclosed_record));
 }
