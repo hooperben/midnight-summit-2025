@@ -49,3 +49,27 @@ sequenceDiagram
     Note right of CR: Requestor sees only<br/>the details client chose<br/>to share
     deactivate CR
 ```
+
+### Current UI Status
+
+The UI is under development - here is some screenshots:
+
+<details>
+  <summary>Home Page</summary>
+  <img src="docs/home-page.png" alt="" width="700"/>
+</details>
+
+<details>
+  <summary>Patient Dashboard</summary>
+  <img src="docs/client-page.png" alt="" width="700"/>
+</details>
+
+<details>
+  <summary>Doctor Dashboard</summary>
+  <img src="docs/doc-portal.png" alt="" width="700"/>
+</details>
+
+<details>
+  <summary>Doctor Create Cert</summary>
+  <img src="docs/doc-create-cert.png" alt="" width="700"/>
+</details>
