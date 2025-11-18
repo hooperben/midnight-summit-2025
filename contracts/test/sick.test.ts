@@ -15,6 +15,7 @@ import {
   NetworkId,
   setNetworkId,
 } from "@midnight-ntwrk/midnight-js-network-id";
+import { stringToBytes } from "../src/utils/string-to-bytes";
 
 setNetworkId(NetworkId.Undeployed);
 
@@ -99,6 +100,9 @@ class LegitSicky {
     id: bigint,
     issued_at: bigint,
     duration_of_certificate: bigint,
+    patient_name: string, // TODO convert to bytes
+    condition: string, // TODO convert to bytes
+    treatment: string, // TODO convert to bytes
   ): Ledger {
     this.circuitContext.currentZswapLocalState = {
       ...this.circuitContext.currentZswapLocalState,
@@ -116,6 +120,9 @@ class LegitSicky {
       {
         bytes: _client,
       },
+      stringToBytes(patient_name),
+      stringToBytes(condition),
+      stringToBytes(treatment),
     ).context;
 
     return ledger(this.circuitContext.transactionContext.state);
@@ -127,6 +134,10 @@ class LegitSicky {
     id: bigint,
     issued_at: bigint,
     duration_of_certificate: bigint,
+    patient_name: string, // TODO convert to bytes
+    condition: string, // TODO convert to bytes
+    treatment: string, // TODO convert to bytes
+    disclose_fields: [boolean, boolean, boolean],
   ): Ledger {
     this.circuitContext.currentZswapLocalState = {
       ...this.circuitContext.currentZswapLocalState,
@@ -144,6 +155,10 @@ class LegitSicky {
       {
         bytes: _doctor,
       },
+      stringToBytes(patient_name),
+      stringToBytes(condition),
+      stringToBytes(treatment),
+      disclose_fields,
     ).context;
 
     return ledger(this.circuitContext.transactionContext.state);
@@ -154,33 +169,70 @@ class LegitSicky {
     id: bigint,
     issued_at: bigint,
     duration_of_certificate: bigint,
+    patient_name: string, // TODO convert to bytes
+    condition: string, // TODO convert to bytes
+    treatment: string, // TODO convert to bytes
   ): any {
     return this.contract.circuits.sicky_record_hash(this.circuitContext, {
       id,
       doctor: { bytes: _doctor },
       issued_at,
       duration_of_certificate,
+      patient_name: stringToBytes(patient_name), // TODO convert to bytes
+      condition: stringToBytes(condition), // TODO convert to bytes
+      treatment: stringToBytes(treatment), // TODO convert to bytes
     });
   }
 }
 
 describe("Testing legit sick circuits", () => {
-  it("should run? ", async () => {
+  it("should run the base case", async () => {
     const legit = new LegitSicky();
+
+    const name = "Gary Peters";
+    const condition = "Head Cold";
+    const treatment = "Rest up big dog";
 
     legit.add_doctor(doctor);
     console.log(legit.getLedger().client_records.size());
-    legit.add_client_record(doctor, client1, 1n, 100000n, 1000n);
+    legit.add_client_record(
+      doctor,
+      client1,
+      1n,
+      100000n,
+      1000n,
+      name,
+      condition,
+      treatment,
+    );
 
     console.log(legit.getPrivateState());
     console.log(legit.getLedger().client_records.size());
 
-    const hash = legit.get_hash(doctor, 1n, 100000n, 1000n);
+    const hash = legit.get_hash(
+      doctor,
+      1n,
+      100000n,
+      1000n,
+      name,
+      condition,
+      treatment,
+    );
 
     console.log(hash.result);
     console.log(legit.getLedger().client_records.lookup({ bytes: client1 }));
 
-    legit.client_disclose(client1, doctor, 1n, 100000n, 1000n);
+    legit.client_disclose(
+      client1,
+      doctor,
+      1n,
+      100000n,
+      1000n,
+      name,
+      condition,
+      treatment,
+      [true, true, true],
+    );
 
     const record = legit
       .getLedger()
