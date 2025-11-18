@@ -1,4 +1,4 @@
-import { describe, it } from "vitest";
+import { describe, it, expect } from "vitest";
 
 import {
   type CircuitContext,
@@ -231,13 +231,17 @@ describe("Testing legit sick circuits", () => {
       name,
       condition,
       treatment,
-      [true, true, true],
+      // don't disclose the condition or treatment
+      [true, false, false],
     );
 
     const record = legit
       .getLedger()
       .client_disclosed.lookup({ bytes: client1 });
 
-    console.log(record);
+    const emptyBits = new Uint8Array(128);
+
+    expect(record.condition.toString()).eq(emptyBits.toString());
+    expect(record.treatment.toString()).eq(emptyBits.toString());
   });
 });
