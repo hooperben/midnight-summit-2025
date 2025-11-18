@@ -10,6 +10,7 @@ struct Sicky_Record {
     doctor: ZswapCoinPublicKey, // doctors[doctor] must be true
     issued_at: Uint<64>,
     duration_of_certificate: Uint<64>, // probably days
+    // the following fields are bytes because Opaque<string> was too expensive
     patient_name: Bytes<128>, // HIDEABLE
     condition: Bytes<128>, // HIDEABLE
     treatment: Bytes<128>, // HIDEABLE
@@ -94,9 +95,9 @@ export circuit client_disclose(
     issued_at: Uint<64>,
     duration_of_certificate: Uint<64>, // probably days
     doctor: ZswapCoinPublicKey,
-    patient_name: Bytes<128>, // HIDEABLE
-    condition: Bytes<128>, // HIDEABLE
-    treatment: Bytes<128>, // HIDEABLE
+    patient_name: Bytes<128>,
+    condition: Bytes<128>,
+    treatment: Bytes<128>,
     disclose_fields: [Boolean, Boolean, Boolean]
 ): [] {
     const client = ownPublicKey();
@@ -117,22 +118,22 @@ export circuit client_disclose(
 
     assert(hash == lookUpHash, "Hashes don't match");
 
-    // const empty = convertFieldToBytes(32, 0, "");
+    const empty = Bytes[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 
-    // const pn = disclose_fields[0] ? some<Opaque<"string">>(patient_name) : empty;
-    // const c = disclose_fields[1] ? some<Opaque<"string">>(condition) : empty;
-    // const t = disclose_fields[2] ? some<Opaque<"string">>(treatment) : empty;
+    const disclosed_patient_name: Bytes<128> = disclose_fields[0] ? patient_name : empty;
+    const disclosed_condition: Bytes<128>  = disclose_fields[1] ? condition : empty;
+    const disclosed_treatment: Bytes<128> = disclose_fields[2] ? treatment : empty;
 
-    // const disclosed_record = Sicky_Record {
-    //     id,
-    //     doctor,
-    //     issued_at,
-    //     duration_of_certificate,
-    //     patient_name: pn,
-    //     condition: c,
-    //     treatment: t,
-    // };
+    const disclosed_record = Sicky_Record {
+        id,
+        doctor,
+        issued_at,
+        duration_of_certificate,
+        disclosed_patient_name,
+        disclosed_condition,
+        disclosed_treatment,
+    };
 
     // // insert public record
-    // client_disclosed.insert(disclose(client), disclose(disclosed_record));
+    client_disclosed.insert(disclose(client), disclose(disclosed_record));
 }
