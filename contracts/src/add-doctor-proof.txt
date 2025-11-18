@@ -1,0 +1,88 @@
+{
+  private: {
+    result: [],
+    input: {
+      value: [
+        Uint8Array(32) [ 100, 120, 177, 241, 56, 181, 214, 203, 10, 49, 208, 110, 91, 125, 0, 96, 142, 71, 228, 21, 87, 199, 110, 122, 165, 8, 179, 228, 253, 114, 21, 49 ]
+      ],
+      alignment: [
+        [Object ...]
+      ],
+    },
+    output: {
+      value: [],
+      alignment: [],
+    },
+    privateTranscriptOutputs: [
+      [Object ...]
+    ],
+    nextPrivateState: {},
+    nextZswapLocalState: {
+      coinPublicKey: "dc454e9b9266dc9683dc85813398a56897461bd52ecb4351e07981183bc0d381",
+      currentIndex: 0n,
+      inputs: [],
+      outputs: [],
+    },
+    unprovenTx: UnprovenTransaction {
+      __wbg_ptr: 1557392,
+      __destroy_into_raw: [Function: __destroy_into_raw],
+      free: [Function: free],
+      mint: [Getter],
+      eraseProofs: [Function: eraseProofs],
+      guaranteedCoins: [Getter],
+      fallibleCoins: [Getter],
+      identifiers: [Function: identifiers],
+      merge: [Function: merge],
+      serialize: [Function: serialize],
+      imbalances: [Function: imbalances],
+      contractCalls: [Getter],
+      toString: [Function: toString],
+    },
+    newCoins: [],
+  },
+  public: {
+    nextContractState: StateValue {
+      __wbg_ptr: 1222784,
+      __destroy_into_raw: [Function: __destroy_into_raw],
+      free: [Function: free],
+      type: [Function: type],
+      arrayPush: [Function: arrayPush],
+      asCell: [Function: asCell],
+      asMap: [Function: asMap],
+      asBoundedMerkleTree: [Function: asBoundedMerkleTree],
+      asArray: [Function: asArray],
+      logSize: [Function: logSize],
+      encode: [Function: encode],
+      toString: [Function: toString],
+    },
+    publicTranscript: [
+      [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...], [Object ...]
+    ],
+    partitionedTranscript: [
+      [Object ...], undefined
+    ],
+    tx: Transaction {
+      __wbg_ptr: 1667856,
+      __destroy_into_raw: [Function: __destroy_into_raw],
+      free: [Function: free],
+      mint: [Getter],
+      eraseProofs: [Function: eraseProofs],
+      guaranteedCoins: [Getter],
+      fallibleCoins: [Getter],
+      wellFormed: [Function: wellFormed],
+      transactionHash: [Function: transactionHash],
+      identifiers: [Function: identifiers],
+      merge: [Function: merge],
+      serialize: [Function: serialize],
+      imbalances: [Function: imbalances],
+      fees: [Function: fees],
+      contractCalls: [Getter],
+      toString: [Function: toString],
+    },
+    status: "SucceedEntirely",
+    txId: "000000000ddab78bab7359bc034014556021336097b57d78a73c2d5cbd52ee2944f65eed",
+    txHash: "01cd4a837d394a4685d99a1e73bc1684870bc75c8930ee3a9136be204f7cf6ed",
+    blockHeight: 2607107,
+    blockHash: "8225facdacdef574b82ca79b9eea4c2f008020db7271020644beccdb743c9673",
+  },
+}

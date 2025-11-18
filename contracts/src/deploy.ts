@@ -91,6 +91,7 @@ async function main() {
     console.log();
 
     let balance = state.balances[nativeToken()] || 0n;
+    console.log(state.balances);
 
     if (balance === 0n) {
       console.log(chalk.yellow.bold("💰 Balance: ") + chalk.red.bold("0 DUST"));
@@ -143,7 +144,7 @@ async function main() {
       );
       console.log();
       console.log(chalk.blue("⏳ Waiting to receive tokens..."));
-      // balance = await waitForFunds(wallet);
+      balance = await waitForFunds(wallet);
     }
 
     console.log(
