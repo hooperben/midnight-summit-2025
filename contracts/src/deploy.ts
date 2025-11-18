@@ -143,7 +143,7 @@ async function main() {
       );
       console.log();
       console.log(chalk.blue("⏳ Waiting to receive tokens..."));
-      balance = await waitForFunds(wallet);
+      // balance = await waitForFunds(wallet);
     }
 
     console.log(
