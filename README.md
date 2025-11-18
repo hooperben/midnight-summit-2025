@@ -1,12 +1,20 @@
-# midnight-summit-2025
+# Legit Sick
 
-My Repo for the MSH 2025
+###### Next generation privacy enhancing Medical Certificate Verification
 
-To run the proof server:
+When Medical Certificates are needed - they’re often not standardised, informal and scattered. Certificate.pdf files end up in anonymous in Downloads folders or unknown email inboxes.
 
-```bash
-docker run -p 6300:6300 midnightnetwork/proof-server -- 'midnight-proof-server --network testnet'
-```
+Unless requestors of Medical Certificates handle all of this sensitive information properly (which we can’t assume they will), this is bound to result in sensitive information leaking/being seen by people it shouldn’t.
+
+LegitSick allows its users to selectively disclose a cryptographic proof that a Registered Doctor has created a Medical Certificate, and allows it’s client’s to select how much they wish to disclose when they share their certificate.
+
+### Repo Structure
+
+- `contracts` - the midnight.network smart contracts that facilitate LegitSick's core functionality.
+- `api` - an express server that the front end uses to read from midnight testnet.
+- `client` - a web app to facilitate use of the contracts and circuits.
+
+please see each respective folders `README.md` for instructions on how to install and run.
 
 ### Core Flow
 
@@ -73,3 +81,11 @@ The UI is under development - here is some screenshots:
   <summary>Doctor Create Cert</summary>
   <img src="docs/doc-create-cert.png" alt="" width="700"/>
 </details>
+
+#### Misc
+
+To run the proof server locally:
+
+```bash
+docker run -p 6300:6300 midnightnetwork/proof-server -- 'midnight-proof-server --network testnet'
+```
