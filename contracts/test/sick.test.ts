@@ -41,20 +41,7 @@ class LegitSicky {
   circuitContext: CircuitContext<LegitSickyState>;
 
   constructor() {
-    const witnesses = {
-      sicky_record: (id, doctor, issued_at, duration_of_certificate) => {
-        const sicky = {
-          id,
-          doctor,
-          issued_at,
-          duration_of_certificate,
-        };
-
-        return sicky;
-      },
-    };
-
-    this.contract = new Contract<LegitSickyState>(witnesses);
+    this.contract = new Contract<LegitSickyState>({});
 
     const {
       currentPrivateState,
