@@ -1,47 +1,37 @@
-import { useState } from "react";
 import "./App.css";
-import { WalletCard } from "./components/wallet-card";
 import "./types/midnight"; // Load global type declarations
 import { Button } from "./components/ui/button";
 import { FileCheck, Shield, Lock } from "lucide-react";
+import { useWallet } from "./contexts/wallet-context";
+import { useIsDoctor } from "./hooks/use-is-doctor";
+import { DocDashboard } from "./components/doc-dashboard";
+import { ClientDashboard } from "./components/client-dashboard";
 
 function App() {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const { isConnected, walletAddress, isConnecting, connect, error } =
+    useWallet();
+  const { data: isDoctor, isLoading: isDoctorLoading } =
+    useIsDoctor(walletAddress);
 
-  const handleConnect = async () => {
-    let isConnected = false;
-    let address = null;
-    try {
-      // To authorize a DApp, call the enable() method and wait for
-      // the user to respond to the request.
-      const connectorAPI = await window?.midnight?.mnLace.enable();
-
-      // Let's now check if the DApp is authorized, using the isEnabled() method
-      const isEnabled = await window?.midnight?.mnLace.isEnabled();
-      if (isEnabled && connectorAPI) {
-        isConnected = true;
-        console.log("Connected to the wallet:", connectorAPI);
-
-        // To get the wallet state, we call the state() API method, that will
-        // return the DAppConnectorWalletState object, which is where we can get
-        // the wallet address from.
-        const state = await connectorAPI.state();
-        address = state.address;
-      }
-    } catch (error) {
-      console.log("An error occurred:", error);
+  // Show dashboards when connected
+  if (isConnected && walletAddress) {
+    // Loading state while checking doctor status
+    if (isDoctorLoading) {
+      return (
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <Shield className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
+            <p className="text-lg text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      );
     }
 
-    setIsConnected(isConnected);
-    setWalletAddress(address);
-  };
+    // Show appropriate dashboard based on doctor status
+    return isDoctor ? <DocDashboard /> : <ClientDashboard />;
+  }
 
-  const handleDisconnect = () => {
-    setWalletAddress(null);
-    setIsConnected(false);
-  };
-
+  // Landing page (not connected)
   return (
     <div className="min-h-screen bg-background text-left">
       {/* Navigation */}
@@ -75,33 +65,31 @@ function App() {
             {/* Feature Pills */}
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
-                <Lock className="w-5 h-5 text-primary flex-shrink-0" />
+                <Lock className="w-5 h-5 text-primary shrink-0" />
                 <span className="text-foreground">
                   End-to-end encrypted verification
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <FileCheck className="w-5 h-5 text-primary flex-shrink-0" />
+                <FileCheck className="w-5 h-5 text-primary shrink-0" />
                 <span className="text-foreground">
                   Selective information sharing
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-primary flex-shrink-0" />
+                <Shield className="w-5 h-5 text-primary shrink-0" />
                 <span className="text-foreground">Blockchain-ready proofs</span>
               </div>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex gap-4 pt-4">
-              {/* <a href="#learn">
-                <Button variant="outline" size="lg">
-                  Learn More
+            <div className="flex flex-col gap-4 pt-4">
+              <div className="flex gap-4">
+                <Button size="lg" onClick={connect} disabled={isConnecting}>
+                  {isConnecting ? "Connecting..." : "Connect Wallet"}
                 </Button>
-              </a> */}
-              <a href="/client">
-                <Button size="lg">Sign In</Button>
-              </a>
+              </div>
+              {error && <p className="text-sm text-red-500">Error: {error}</p>}
             </div>
           </div>
 
@@ -109,7 +97,7 @@ function App() {
           <div className="hidden lg:flex items-center justify-center">
             <div className="relative w-full aspect-square max-w-md">
               {/* Animated gradient cards */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-accent/10 rounded-3xl blur-3xl" />
 
               {/* Certificate cards */}
               <div className="absolute inset-0 flex items-center justify-center">
@@ -118,7 +106,7 @@ function App() {
                   <div className="absolute inset-0 bg-card border border-border rounded-2xl shadow-lg transform rotate-12 translate-y-4" />
 
                   {/* Front card */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 border border-border rounded-2xl shadow-2xl p-8 flex flex-col justify-between">
+                  <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-primary/10 border border-border rounded-2xl shadow-2xl p-8 flex flex-col justify-between">
                     <div>
                       <Shield className="w-12 h-12 text-primary mb-4" />
                       <h3 className="text-xl font-bold text-foreground">
@@ -173,16 +161,6 @@ function App() {
         </div>
       </main>
 
-      {/* Doctor Portal Link */}
-      <div className="border-t border-border py-12">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <p className="text-muted-foreground mb-4">
-            Are you a healthcare provider?
-          </p>
-          <Button variant="outline">Access Doctor Portal</Button>
-        </div>
-      </div>
-
       <div className="flex w-full justify-center">
         <p>
           powered by <a href="https://midnight.network">midnight.network</a>
@@ -190,19 +168,6 @@ function App() {
       </div>
     </div>
   );
-
-  // return (
-  //   <>
-  //     <h1>Legit Sicky</h1>
-
-  //     <WalletCard
-  //       isConnected={isConnected}
-  //       walletAddress={walletAddress}
-  //       onConnect={handleConnect}
-  //       onDisconnect={handleDisconnect}
-  //     />
-  //   </>
-  // );
 }
 
 export default App;

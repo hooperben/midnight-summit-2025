@@ -13,6 +13,7 @@ import { Transaction } from "@midnight-ntwrk/ledger";
 import { Transaction as ZswapTransaction } from "@midnight-ntwrk/zswap";
 import * as Rx from "rxjs";
 import * as path from "path";
+import { fileURLToPath } from "url";
 import { levelPrivateStateProvider } from "@midnight-ntwrk/midnight-js-level-private-state-provider";
 import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-public-data-provider";
 import { NodeZkConfigProvider } from "@midnight-ntwrk/midnight-js-node-zk-config-provider";
@@ -23,18 +24,26 @@ globalThis.WebSocket = WebSocket;
 
 setNetworkId(NetworkId.TestNet);
 
+// Get the directory of this file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// contracts/helpers/get-deployment.ts -> contracts/
+const contractsRoot = path.resolve(__dirname, "..");
+
 export const getLegitSickDeploy = async () => {
   try {
     // Validate environment
     EnvironmentManager.validateEnvironment();
 
-    // Check for deployment file
-    if (!fs.existsSync("deployment.json")) {
+    // Check for deployment file using absolute path
+    const deploymentPath = path.join(contractsRoot, "deployment.json");
+    if (!fs.existsSync(deploymentPath)) {
       console.error("❌ No deployment.json found! Run npm run deploy first.");
+      console.error(`   Expected at: ${deploymentPath}`);
       process.exit(1);
     }
 
-    const deployment = JSON.parse(fs.readFileSync("deployment.json", "utf-8"));
+    const deployment = JSON.parse(fs.readFileSync(deploymentPath, "utf-8"));
     console.log(`Contract: ${deployment.contractAddress}\n`);
 
     const networkConfig = EnvironmentManager.getNetworkConfig();
@@ -56,7 +65,7 @@ export const getLegitSickDeploy = async () => {
       wallet.state().pipe(Rx.filter((s) => s.syncProgress?.synced === true)),
     );
 
-    const contractPath = path.join(process.cwd(), "contracts");
+    const contractPath = path.join(contractsRoot, "contracts");
 
     const contractName =
       deployment.contractName || process.env.CONTRACT_NAME || "legit-sick";
@@ -100,7 +109,12 @@ export const getLegitSickDeploy = async () => {
       },
     };
 
-    const zkConfigPath = path.join(contractPath, "managed", "legit-sick");
+    const zkConfigPath = path.join(
+      contractsRoot,
+      "contracts",
+      "managed",
+      "legit-sick",
+    );
     const providers = {
       privateStateProvider: levelPrivateStateProvider({
         privateStateStoreName: "legit-sick-state",
