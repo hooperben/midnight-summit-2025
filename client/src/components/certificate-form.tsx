@@ -4,13 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -26,6 +20,14 @@ interface CertificateFormData {
   duration: string;
 }
 
+const samplePatients = [
+  {
+    name: "Greg Peters",
+    address:
+      "mn_shield-addr_test1lazcwpnw27a4c9r5z9kyk8pc8l5e60e7jafrg0qfcwejdyxdz0sqxq8j33sqmhsz4egdyk69ffgnl6v5mr4gtx639qmg2ynstapzfuq0k57fkx4c",
+  },
+];
+
 export function CertificateForm() {
   const [formData, setFormData] = useState<CertificateFormData>({
     clientId: "",
@@ -38,6 +40,13 @@ export function CertificateForm() {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleClientChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      clientId: value,
     }));
   };
 
@@ -63,28 +72,28 @@ export function CertificateForm() {
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Certificate Details</CardTitle>
-        <CardDescription>
-          Fill in the details to create a new medical certificate
-        </CardDescription>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Client ID Field */}
           <div className="space-y-2">
-            <Label htmlFor="clientId">Client ID</Label>
-            <Input
-              id="clientId"
-              name="clientId"
-              placeholder="Enter client ID"
+            <Label htmlFor="clientId">Client</Label>
+            <Select
               value={formData.clientId}
-              onChange={handleInputChange}
-              required
-              className="w-full"
-            />
+              onValueChange={handleClientChange}
+            >
+              <SelectTrigger id="clientId" className="w-full">
+                <SelectValue placeholder="Select a patient" />
+              </SelectTrigger>
+              <SelectContent>
+                {samplePatients.map((patient) => (
+                  <SelectItem key={patient.address} value={patient.address}>
+                    {patient.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <p className="text-xs text-muted-foreground">
-              The unique identifier for the client receiving this certificate
+              Select the patient receiving this certificate
             </p>
           </div>
 
@@ -143,7 +152,7 @@ export function CertificateForm() {
             <p className="text-sm font-semibold text-foreground mb-4">
               Form Data Preview
             </p>
-            <pre className="bg-muted p-4 rounded-lg text-xs text-muted-foreground overflow-auto max-h-48">
+            <pre className="bg-muted p-4 rounded-lg text-xs text-muted-foreground overflow-auto max-h-48 whitespace-pre-wrap break-all">
               {JSON.stringify(formData, null, 2)}
             </pre>
           </div>

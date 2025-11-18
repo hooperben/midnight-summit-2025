@@ -33,7 +33,7 @@ function App() {
 
   // Landing page (not connected)
   return (
-    <div className="min-h-screen bg-background text-left">
+    <div className="min-h-screen bg-background text-left flex flex-col">
       {/* Navigation */}
       <nav className="border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -47,7 +47,7 @@ function App() {
       </nav>
 
       {/* Hero Section */}
-      <main className="max-w-6xl mx-auto px-6 py-20">
+      <main className="max-w-6xl mx-auto px-6 py-20 flex-1">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="flex flex-col gap-8">
@@ -66,9 +66,7 @@ function App() {
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
                 <Lock className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-foreground">
-                  End-to-end encrypted verification
-                </span>
+                <span className="text-foreground">Advanced Cryptography</span>
               </div>
               <div className="flex items-center gap-3">
                 <FileCheck className="w-5 h-5 text-primary shrink-0" />
@@ -78,7 +76,9 @@ function App() {
               </div>
               <div className="flex items-center gap-3">
                 <Shield className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-foreground">Blockchain-ready proofs</span>
+                <span className="text-foreground">
+                  Control your own Medical Data
+                </span>
               </div>
             </div>
 
@@ -143,29 +143,24 @@ function App() {
             </div>
           </div>
         </div>
-
-        {/* Stats Section */}
-        <div className="grid md:grid-cols-3 gap-8 mt-32 pt-20 border-t border-border">
-          <div className="text-center">
-            <div className="text-4xl font-bold text-primary mb-2">100%</div>
-            <p className="text-muted-foreground">Cryptographically Verified</p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-primary mb-2">Zero</div>
-            <p className="text-muted-foreground">Unnecessary Data Shared</p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-primary mb-2">Instant</div>
-            <p className="text-muted-foreground">Proof Verification</p>
-          </div>
-        </div>
       </main>
 
-      <div className="flex w-full justify-center">
-        <p>
-          powered by <a href="https://midnight.network">midnight.network</a>
-        </p>
-      </div>
+      {/* Footer */}
+      <footer className="border-t border-border py-6">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            powered by{" "}
+            <a
+              href="https://midnight.network"
+              className="text-primary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              midnight.network
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

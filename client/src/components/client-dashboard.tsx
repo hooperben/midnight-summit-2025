@@ -1,7 +1,10 @@
 import { Shield } from "lucide-react";
-import { Button } from "./ui/button";
+import { AccountModal } from "./account-modal";
+import { useWallet } from "@/contexts/wallet-context";
 
 export const ClientDashboard = () => {
+  const { walletAddress, disconnect } = useWallet();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -16,9 +19,14 @@ export const ClientDashboard = () => {
               LegitSick
             </span>
           </a>
-          <span className="text-sm text-muted-foreground">
-            Client Dashboard
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
+              Client Dashboard
+            </span>
+            {walletAddress && (
+              <AccountModal address={walletAddress} onSignOut={disconnect} />
+            )}
+          </div>
         </div>
       </nav>
 
@@ -38,9 +46,6 @@ export const ClientDashboard = () => {
               No certificates yet. Once your doctor issues a certificate, it
               will appear here.
             </p>
-            <a href="/">
-              <Button variant="outline">Return Home</Button>
-            </a>
           </div>
         </div>
       </main>
